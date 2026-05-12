@@ -837,8 +837,6 @@ const UpdateAction: DocumentActionComponent = ({
 
         if ('error' in res && isBaseQueryError(res.error) && res.error.name === 'ValidationError') {
           setErrors(formatValidationErrors(res.error));
-        } else {
-          resetForm();
         }
       } else {
         const res = await create(

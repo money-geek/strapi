@@ -20,7 +20,7 @@ import { Plus } from '@strapi/icons';
 import isEqual from 'lodash/isEqual';
 import { stringify } from 'qs';
 import { useIntl } from 'react-intl';
-import { useNavigate, Link as ReactRouterLink, useParams } from 'react-router-dom';
+import { useNavigate, Link as ReactRouterLink, useParams, useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 import { InjectionZone } from '../../components/InjectionZone';
@@ -60,6 +60,7 @@ const LayoutsHeaderCustom = styled(Layouts.Header)`
 const ListViewPage = () => {
   const { trackUsage } = useTracking();
   const navigate = useNavigate();
+  const location = useLocation();
   const { formatMessage } = useIntl();
   const { toggleNotification } = useNotification();
   const { _unstableFormatAPIError: formatAPIError } = useAPIErrorHandler(getTranslation);
@@ -70,6 +71,11 @@ const ListViewPage = () => {
   const [displayedHeaders, setDisplayedHeaders] = React.useState<ListFieldLayout[]>([]);
 
   const listLayout = usePrev(list.layout);
+
+  React.useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   React.useEffect(() => {
     /**
      * ONLY update the displayedHeaders if the document
@@ -181,7 +187,7 @@ const ListViewPage = () => {
           defaultMessage: 'status',
         }),
         searchable: false,
-        sortable: false,
+        sortable: true,
       } satisfies ListFieldLayout);
     }
 

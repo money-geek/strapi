@@ -163,20 +163,6 @@ const Form = React.forwardRef<HTMLFormElement, FormProps>(
       values: props.initialValues ?? {},
     });
 
-    React.useEffect(() => {
-      /**
-       * ONLY update the initialValues if the prop has changed.
-       */
-      if (!isEqual(initialValues.current, props.initialValues)) {
-        initialValues.current = props.initialValues ?? {};
-
-        dispatch({
-          type: 'SET_INITIAL_VALUES',
-          payload: props.initialValues ?? {},
-        });
-      }
-    }, [props.initialValues]);
-
     const setErrors = React.useCallback((errors: FormErrors) => {
       dispatch({
         type: 'SET_ERRORS',

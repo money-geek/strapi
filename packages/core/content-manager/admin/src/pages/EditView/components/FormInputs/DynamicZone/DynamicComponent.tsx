@@ -26,7 +26,8 @@ import { getTranslation } from '../../../../../utils/translations';
 import { ResponsiveGridItem, ResponsiveGridRoot } from '../../FormLayout';
 import { InputRenderer, type InputRendererProps } from '../../InputRenderer';
 
-import type { ComponentPickerProps } from './ComponentPicker';
+import { AddComponentButton } from './AddComponentButton';
+import { ComponentPicker, type ComponentPickerProps } from './ComponentPicker';
 
 interface DynamicComponentProps
   extends Pick<UseDragAndDropOptions, 'onGrabItem' | 'onDropItem' | 'onCancel'>,
@@ -39,6 +40,7 @@ interface DynamicComponentProps
   onRemoveComponentClick: () => void;
   onMoveComponent: (dragIndex: number, hoverIndex: number) => void;
   children?: (props: InputRendererProps) => React.ReactNode;
+  isDynamicComponentOpen?: boolean;
 }
 
 const DynamicComponent = ({
@@ -54,9 +56,14 @@ const DynamicComponent = ({
   dynamicComponentsByCategory = {},
   onAddComponent,
   children,
+  isDynamicComponentOpen,
 }: DynamicComponentProps) => {
   const { formatMessage } = useIntl();
   const formValues = useForm('DynamicComponent', (state) => state.values);
+  const [addComponentIsOpen, setAddComponentIsOpen] = React.useState(false);
+  const handleClickOpenPicker = () => {
+    setAddComponentIsOpen((prev) => !prev);
+  };
   const {
     edit: { components },
   } = useDocLayout();
@@ -110,7 +117,9 @@ const DynamicComponent = ({
 
   const { value = [], rawError } = useField(`${name}.${index}`);
 
-  const [collapseToOpen, setCollapseToOpen] = React.useState<string>('');
+  const [collapseToOpen, setCollapseToOpen] = React.useState<string>(
+    isDynamicComponentOpen ? accordionValue : ''
+  );
 
   React.useEffect(() => {
     if (rawError && value) {
@@ -214,6 +223,33 @@ const DynamicComponent = ({
       <Flex justifyContent="center">
         <Rectangle background="neutral200" />
       </Flex>
+      <>
+        <Flex justifyContent="center">
+          <AddComponentButton
+            isDisabled={disabled}
+            isOpen={addComponentIsOpen}
+            onClick={handleClickOpenPicker}
+          >
+            {addComponentIsOpen ? 'Close' : 'Add component to flex_zone'}
+          </AddComponentButton>
+        </Flex>
+        {addComponentIsOpen && (
+          <Flex justifyContent="center">
+            <Rectangle background="neutral200" />
+          </Flex>
+        )}
+        <ComponentPicker
+          dynamicComponentsByCategory={dynamicComponentsByCategory}
+          isOpen={addComponentIsOpen}
+          onClickAddComponent={(uid) => {
+            onAddComponent(uid, index);
+            handleClickOpenPicker();
+          }}
+        />
+        <Flex justifyContent="center">
+          <Rectangle background="neutral200" />
+        </Flex>
+      </>
       <StyledBox ref={composedBoxRefs} hasRadius>
         {isDragging ? (
           <Preview />
