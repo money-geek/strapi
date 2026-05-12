@@ -26,7 +26,8 @@ import { getTranslation } from '../../../../../utils/translations';
 import { ResponsiveGridItem, ResponsiveGridRoot } from '../../FormLayout';
 import { InputRenderer, type InputRendererProps } from '../../InputRenderer';
 
-import type { ComponentPickerProps } from './ComponentPicker';
+import { AddComponentButton } from './AddComponentButton';
+import { ComponentPicker, type ComponentPickerProps } from './ComponentPicker';
 
 interface DynamicComponentProps
   extends Pick<UseDragAndDropOptions, 'onGrabItem' | 'onDropItem' | 'onCancel'>,
@@ -60,6 +61,11 @@ const DynamicComponent = ({
   const { formatMessage } = useIntl();
   const { currentDocumentMeta } = useDocumentContext('DynamicComponent');
   const isDesktop = useIsDesktop();
+
+  const [addComponentIsOpen, setAddComponentIsOpen] = React.useState(false);
+  const handleClickOpenPicker = () => {
+    setAddComponentIsOpen((prev) => !prev);
+  };
 
   const {
     edit: { components },
@@ -281,6 +287,36 @@ const DynamicComponent = ({
 
   return (
     <ComponentContainer tag="li" width="100%">
+      <Flex justifyContent="center">
+        <Rectangle background="neutral200" />
+      </Flex>
+      <Flex justifyContent="center">
+        <AddComponentButton
+          isDisabled={disabled}
+          isOpen={addComponentIsOpen}
+          onClick={handleClickOpenPicker}
+        >
+          {addComponentIsOpen
+            ? formatMessage({ id: 'app.utils.close-label', defaultMessage: 'Close' })
+            : formatMessage({
+                id: getTranslation('components.DynamicZone.add-item-above'),
+                defaultMessage: 'Add component above',
+              })}
+        </AddComponentButton>
+      </Flex>
+      {addComponentIsOpen && (
+        <Flex justifyContent="center">
+          <Rectangle background="neutral200" />
+        </Flex>
+      )}
+      <ComponentPicker
+        dynamicComponentsByCategory={dynamicComponentsByCategory}
+        isOpen={addComponentIsOpen}
+        onClickAddComponent={(uid) => {
+          onAddComponent(uid, index);
+          handleClickOpenPicker();
+        }}
+      />
       <Flex justifyContent="center">
         <Rectangle background="neutral200" />
       </Flex>

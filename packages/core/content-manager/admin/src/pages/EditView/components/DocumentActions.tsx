@@ -1168,8 +1168,6 @@ const UpdateAction: DocumentActionComponent = ({
 
         if ('error' in res && isBaseQueryError(res.error) && res.error.name === 'ValidationError') {
           setErrors(formatValidationErrors(res.error));
-        } else {
-          resetForm(latestValues);
         }
       } else {
         const { data } = handleInvisibleAttributes(transformData(latestValues), {

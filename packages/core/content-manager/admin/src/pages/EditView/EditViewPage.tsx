@@ -87,6 +87,10 @@ const EditViewPage = () => {
 
   const hasDraftAndPublished = schema?.options?.draftAndPublish ?? false;
 
+  React.useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   useOnce(() => {
     /**
      * We only ever want to fire the notification once otherwise

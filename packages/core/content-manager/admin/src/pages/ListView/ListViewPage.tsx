@@ -33,7 +33,7 @@ import { Duplicate, Plus } from '@strapi/icons';
 import { EmptyDocuments } from '@strapi/icons/symbols';
 import { stringify } from 'qs';
 import { useIntl } from 'react-intl';
-import { useNavigate, Link as ReactRouterLink, useParams } from 'react-router-dom';
+import { useNavigate, Link as ReactRouterLink, useParams, useLocation } from 'react-router-dom';
 import { styled } from 'styled-components';
 
 import { InjectionZone } from '../../components/InjectionZone';
@@ -77,12 +77,17 @@ const LayoutsHeaderCustom = styled(Layouts.Header)`
 const ListViewPage = () => {
   const { trackUsage } = useTracking();
   const navigate = useNavigate();
+  const location = useLocation();
   const { formatMessage } = useIntl();
   const { toggleNotification } = useNotification();
   const { copy } = useClipboard();
   const { _unstableFormatAPIError: formatAPIError } = useAPIErrorHandler(getTranslation);
   const isMobile = useIsMobile();
   const isDesktop = useIsDesktop();
+
+  React.useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const handleCopyDocumentId = React.useCallback(
     async (e: React.MouseEvent, documentId: string | undefined) => {
