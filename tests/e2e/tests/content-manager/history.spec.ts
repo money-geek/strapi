@@ -201,7 +201,7 @@ describeOnCondition(edition === 'EE')('History', () => {
     test('A user should see the relations and whether some are missing', async ({ page }) => {
       // Create new author
       await clickAndWait(page, page.getByRole('link', { name: 'Content Manager' }));
-      await clickAndWait(page, page.getByRole('link', { name: 'Author' }));
+      await clickAndWait(page, page.getByRole('link', { name: 'Author' }).first());
       await clickAndWait(page, page.getByRole('link', { name: /Create new entry/, exact: true }));
       await page.waitForURL(AUTHOR_CREATE_URL);
       await page.getByRole('textbox', { name: 'name' }).fill('Will Kitman');
@@ -218,14 +218,16 @@ describeOnCondition(edition === 'EE')('History', () => {
       await page.getByRole('combobox', { name: 'Authors' }).click();
       await page.getByText('Coach Beard').click();
       // Make sure the relation was added before proceeding to save, otherwise we risk saving too quickly without the relation
-      await expect(page.getByRole('link', { name: 'Coach Beard' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Coach Beard' })).toBeVisible();
       await page.getByRole('button', { name: 'Save' }).click();
       // Confirm the save was succesful before proceeding, otherwise we may end up on the related page before the relation is established
       await findAndClose(page, 'Saved Document');
 
       // Delete one of the authors, leaving only Coach Beard
-      await clickAndWait(page, page.getByRole('link', { name: 'Will Kitman' }));
-      await page.waitForURL(AUTHOR_EDIT_URL);
+      // open the Relation modal
+      await clickAndWait(page, page.getByRole('button', { name: 'Will Kitman' }));
+      // Click to go to the related document
+      await clickAndWait(page, page.getByRole('button', { name: 'Go to entry' }));
       await page.getByRole('button', { name: 'More actions' }).click();
       await page.getByRole('menuitem', { name: /delete entry/i }).click();
       await page.getByRole('button', { name: /confirm/i }).click();
@@ -271,7 +273,7 @@ describeOnCondition(edition === 'EE')('History', () => {
       await page.getByRole('button', { name: 'Finish' }).click();
       await page.getByRole('button', { name: 'Save' }).click();
       await waitForRestart(page);
-      await expect(page.getByRole('cell', { name: 'titleRename', exact: true })).toBeVisible();
+      await expect(page.getByLabel('titleRename')).toBeVisible();
 
       /**
        * Update the existing entry to create another version
@@ -429,11 +431,11 @@ describeOnCondition(edition === 'EE')('History', () => {
       await page.getByRole('button', { name: 'Finish' }).click();
       await page.getByRole('button', { name: 'Save' }).click();
       await waitForRestart(page);
-      await expect(page.getByRole('cell', { name: 'authors', exact: true })).toBeVisible();
+      await expect(page.getByLabel('authors')).toBeVisible();
 
       // Create new author
       await clickAndWait(page, page.getByRole('link', { name: 'Content Manager' }));
-      await clickAndWait(page, page.getByRole('link', { name: 'Author' }));
+      await clickAndWait(page, page.getByRole('link', { name: 'Author' }).first());
       await clickAndWait(page, page.getByRole('link', { name: /Create new entry/, exact: true }));
       await page.waitForURL(AUTHOR_CREATE_URL);
       await page.getByRole('textbox', { name: 'name' }).fill('Will Kitman');
@@ -450,8 +452,10 @@ describeOnCondition(edition === 'EE')('History', () => {
       await page.getByRole('button', { name: 'Save' }).click();
 
       // Delete one of the authors, leaving only Coach Beard
-      await clickAndWait(page, page.getByRole('link', { name: 'Will Kitman' }));
-      await page.waitForURL(AUTHOR_EDIT_URL);
+      // Open the relation modal
+      await clickAndWait(page, page.getByRole('button', { name: 'Will Kitman' }));
+      // Click to go to the related document
+      await clickAndWait(page, page.getByRole('button', { name: 'Go to entry' }));
       await page.getByRole('button', { name: /more actions/i }).click();
       await page.getByRole('menuitem', { name: /delete entry/i }).click();
       await page.getByRole('button', { name: /confirm/i }).click();
@@ -495,7 +499,7 @@ describeOnCondition(edition === 'EE')('History', () => {
       await page.getByRole('button', { name: 'Finish' }).click();
       await page.getByRole('button', { name: 'Save' }).click();
       await waitForRestart(page);
-      await expect(page.getByRole('cell', { name: 'titleRename', exact: true })).toBeVisible();
+      await expect(page.getByLabel('titleRename')).toBeVisible();
 
       /**
        * Update the existing entry to create another version
