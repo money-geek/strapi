@@ -2,11 +2,19 @@ import { forwardRef, memo } from 'react';
 
 import { Toggle, useComposedRefs, Field } from '@strapi/design-system';
 import { useIntl } from 'react-intl';
+import { styled } from 'styled-components';
 
 import { useFocusInputField } from '../../hooks/useFocusInputField';
 import { useField } from '../Form';
 
 import { InputProps } from './types';
+
+const CustomBooleanInputLabel = styled(Field.Label)`
+  overflow: auto;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+`;
 
 const BooleanInput = forwardRef<HTMLInputElement, InputProps>(
   ({ name, required, label, hint, labelAction, ...props }, ref) => {
@@ -18,7 +26,7 @@ const BooleanInput = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <Field.Root error={field.error} name={name} hint={hint} required={required} maxWidth="320px">
-        <Field.Label action={labelAction}>{label}</Field.Label>
+        <CustomBooleanInputLabel action={labelAction}>{label}</CustomBooleanInputLabel>
         <Toggle
           ref={composedRefs}
           checked={field.value === null ? null : field.value || false}

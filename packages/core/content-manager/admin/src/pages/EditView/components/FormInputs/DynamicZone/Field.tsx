@@ -58,6 +58,9 @@ const DynamicZone = ({
   const { max = Infinity, min = -Infinity } = attribute ?? {};
 
   const [addComponentIsOpen, setAddComponentIsOpen] = React.useState(false);
+  const [newAddedComponentPosition, setNewAddedComponentPosition] = React.useState<number | null>(
+    null
+  );
   const [liveText, setLiveText] = React.useState('');
 
   const {
@@ -117,6 +120,9 @@ const DynamicZone = ({
 
     const data = transformations(form);
 
+    const normalizedPosition = position === undefined ? value?.length || 0 : position;
+    setNewAddedComponentPosition(normalizedPosition);
+
     addFieldRow(name, data, position);
   };
 
@@ -134,6 +140,7 @@ const DynamicZone = ({
   };
 
   const handleMoveComponent = (newIndex: number, currentIndex: number) => {
+    setNewAddedComponentPosition(null);
     setLiveText(
       formatMessage(
         {
@@ -197,6 +204,7 @@ const DynamicZone = ({
   };
 
   const handleRemoveComponent = (name: string, currentIndex: number) => () => {
+    setNewAddedComponentPosition(null);
     removeFieldRow(name, currentIndex);
   };
 
@@ -286,6 +294,7 @@ const DynamicZone = ({
                     onGrabItem={handleGrabItem}
                     onAddComponent={handleAddComponent}
                     dynamicComponentsByCategory={dynamicComponentsByCategory}
+                    isDynamicComponentOpen={index === newAddedComponentPosition}
                   >
                     {children}
                   </DynamicComponent>

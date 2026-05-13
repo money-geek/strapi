@@ -134,7 +134,10 @@ const useDocument: UseDocument = (args, opts) => {
 
   const getTitle = (mainField: string) => {
     // Always use mainField if it's not an id
-    if (mainField !== 'id' && document?.[mainField]) {
+    if (document?.[mainField]) {
+      if (mainField === 'id') {
+        return `${schema?.info.displayName} - ${document[mainField]}`;
+      }
       return document[mainField];
     }
 
